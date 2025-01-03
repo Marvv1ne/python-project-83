@@ -11,3 +11,6 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 @app.route('/')
 def index():
     return 'Hello flask'
+
+if __name__ == '__main__':
+    app.run()
