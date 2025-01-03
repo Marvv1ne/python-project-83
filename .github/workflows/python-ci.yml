@@ -20,7 +20,7 @@ jobs:
         # make depends on poetry
       - name: Install dependencies
         run: |
-          build.sh
+          make build
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
         env:
