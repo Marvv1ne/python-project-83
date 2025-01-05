@@ -1,7 +1,7 @@
-create table urls (
+CREATE TABLE urls (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255),
-    last_check DATETIME,
+    last_check VARCHAR(15),
     response_code INTEGER,
 );
 
@@ -10,5 +10,5 @@ CREATE TABLE url (
     response_code INTEGER,
     title VARCHAR(255),
     description TEXT,
-    creation_date DATETIME,
+    creation_date VARCHAR(15),
 );
