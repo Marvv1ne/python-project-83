@@ -3,6 +3,7 @@ __pycache__/
 wheels/
 dist/
 .python-version
+.env
 
 # Unit test / coverage reports
 htmlcov/
