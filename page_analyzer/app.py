@@ -25,8 +25,7 @@ def index():
 def post_new():
     url = request.form.get('url')
     if not validators.url(url):
-        flash('Некорректный URL')
-        
+        flash('Некорректный URL', 'error')
         return render_template('index.html')
     normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
     date = datetime.date.today()
