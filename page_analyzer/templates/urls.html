@@ -41,22 +41,18 @@
             </tr>
           </thead>
           <tbody>
-
+            {% for url in urls%}
             <tr>
-              <td>1</td>
+              <td>{{ url.id}}</td>
               <td>
-                <a href="/urls/1">
-                  https://www.rutube.ru
+                <a href="/urls/{{ url.id}}">
+                  {{ url.name}}
                 </a>
               </td>
-
-              <td>2025-01-05</td>
-
-
+              <td>{{ url.created_at}}</td>
               <td>200</td>
-
             </tr>
-
+            {% endfor %}
           </tbody>
         </table>
       </div>
