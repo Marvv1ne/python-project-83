@@ -3,7 +3,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import validators
 import datetime
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, get_flashed_messages
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from .db import UrlsTable
@@ -25,12 +25,14 @@ def index():
 def post_new():
     url = request.form.get('url')
     if not validators.url(url):
-        flash('Wrong url!')
+        flash('Некорректный URL')
+        
         return render_template('index.html')
     normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
     date = datetime.date.today()
     req = UrlsTable(conn)
     id = req.insert(name=normalized_url, created_at=date)
+    flash('Great', 'success')
     return redirect(url_for('get_new', id=id))
 
 @app.route('/urls/<id>')
