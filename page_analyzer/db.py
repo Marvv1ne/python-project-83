@@ -11,19 +11,21 @@ class UrlsTable:
         self.conn = conn
     
     def insert(self, name, created_at):
-        sql = "INSERT INTO urls (name, created_at) VALUES (%(name)s, %(created_at)s) ON CONFLICT (name) DO NOTHING;"
+        sql = "INSERT INTO urls (name, created_at) VALUES (%(name)s, %(created_at)s) RETURNING id;"
         with self.conn.cursor() as curs:
             curs.execute(sql, {'name': name, 'created_at': created_at})
+            id = curs.fetchone()[0]
             self.conn.commit()
-            id = self._get_id(name)
         return id
     
-    def _get_id(self, name):
+    def get_id(self, name):
         sql = "SELECT id FROM urls WHERE name=%(name)s;"
         with self.conn.cursor() as curs:
             curs.execute(sql, {'name': name})
-            id = curs.fetchone()[0]
-        return id
+            id = curs.fetchone()
+            if not id:
+                return None
+        return id[0]
 
     def get_row(self, id):
         sql = "SELECT * FROM urls WHERE id=%(id)s;"
