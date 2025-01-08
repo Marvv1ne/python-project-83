@@ -26,19 +26,25 @@ def post_new():
     url = request.form.get('url')
     if not validators.url(url):
         flash('Некорректный URL', 'error')
-        return render_template('index.html')
+        messages = get_flashed_messages(with_categories=True)
+        return render_template('index.html', messages)
     normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
     date = datetime.date.today()
     req = UrlsTable(conn)
+    id = req.get_id(name=normalized_url)
+    if id:
+        flash('Страница уже существует', 'primary')
+        return redirect(url_for('get_new', id=id))
     id = req.insert(name=normalized_url, created_at=date)
-    flash('Great', 'success')
+    flash('Страница успешно добавлена', 'success')
     return redirect(url_for('get_new', id=id))
 
 @app.route('/urls/<id>')
 def get_new(id):
     req = UrlsTable(conn)
     url = req.get_row(id)
-    return render_template('url.html', url=url)
+    messages = get_flashed_messages(with_categories=True)
+    return render_template('url.html', url=url, messages=messages)
 
 @app.route('/urls')
 def get_all():
