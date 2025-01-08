@@ -21,7 +21,11 @@
 
   </header>
   
-  
+  {% for class, message in messages %}
+  <div class="alert alert-{{ class }} alert-dismissible fade show" role="alert">
+    {{ message }}
+  </div>
+  {% endfor %}
 
   <main class="flex-grow-1">
     <div class="container-lg mt-3">

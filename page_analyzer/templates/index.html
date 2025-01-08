@@ -22,8 +22,9 @@
         </nav>
     </header>    
     
-    {% for message in get_flashed_messages() %}
-        <div class="alert alert-danger error" role="alert">{{ message }}</div>
+    {% for class, message in messages %}
+    <div class="alert alert-{{ class }} alert-dismissible fade show" role="alert">
+        {{ message }}
     {% endfor %}    
 
     <main class="flex-grow-1">
