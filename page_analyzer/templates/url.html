@@ -70,14 +70,18 @@
     </thead>
       <tbody>
     
-    <tr>
-        <td>1</td>
-        <td>200</td>
-        <td></td>
-        <td>тут будет что то другой</td>
-        <td>и тут будет что то другое</td>
-        <td>и даже тут будет что то другое</td>
-    </tr>
+    
+      {% for info in infos %}
+      <tr>
+        <td>{{ info.id }}</td>
+        <td>{{ info.status_code }}</td>
+        <td>{{ info.h1 }}</td>
+        <td>{{ info.title }}</td>
+        <td>{{ info.description }}</td>
+        <td>{{ info.created_at }}</td>
+      </tr>
+      {% endfor %}
+    
     
     </tbody>
     </table>

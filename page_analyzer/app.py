@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, get
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from .db import UrlsTable
+from .db_branch import Table
 
 
 load_dotenv()
@@ -30,27 +31,37 @@ def post_new():
         return render_template('index.html', messages)
     normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
     date = datetime.date.today()
-    req = UrlsTable(conn)
-    id = req.get_id(name=normalized_url)
+    req = Table(conn=conn, table_name='urls')
+    id = req.select_element('id', {'name': normalized_url})
     if id:
         flash('Страница уже существует', 'primary')
         return redirect(url_for('get_new', id=id))
-    id = req.insert(name=normalized_url, created_at=date)
+    id = req.insert({'name': normalized_url, 'created_at': date})
     flash('Страница успешно добавлена', 'success')
     return redirect(url_for('get_new', id=id))
 
 @app.route('/urls/<id>')
 def get_new(id):
-    req = UrlsTable(conn)
-    url = req.get_row(id)
+    req_urls = UrlsTable(conn)
+    req_checks = Table(conn, 'url_checks')
+    url = req_urls.get_row(id)
+    infos = req_checks.select_row('*', {'url_id':id})
     messages = get_flashed_messages(with_categories=True)
-    return render_template('url.html', url=url, messages=messages)
+    return render_template('url.html', url=url, messages=messages, infos=infos)
 
 @app.route('/urls')
 def get_all():
     req = UrlsTable(conn)
     urls = req.get_all()
     return render_template('urls.html', urls=urls)
+
+@app.post('/urls/<id>/checks')
+def post_checks(id):
+    req = Table(conn=conn, table_name='url_checks')
+    date = str(datetime.date.today())
+    values = {'url_id': id, 'created_at': date}
+    id = req.insert(values)
+    return redirect(url_for('get_new', id=id))
 
 
     
