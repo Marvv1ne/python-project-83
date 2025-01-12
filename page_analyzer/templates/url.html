@@ -52,7 +52,7 @@
   </div>
 
     <h2 class="mt-5 mb-3">Проверки</h2>
-    <form method="post" action="/urls/1/checks">
+    <form method="post" action="/urls/{{ id }}/checks">
     <input type="submit" class="btn btn-primary" value="Запустить проверку">
     </form>
     
@@ -62,6 +62,7 @@
       <tr>
         <th>ID</th>
         <th>Код ответа</th>
+        <th>url_id</th>
         <th>h1</th>
         <th>title</th>
         <th>description</th>
@@ -75,6 +76,7 @@
       <tr>
         <td>{{ info.id }}</td>
         <td>{{ info.status_code }}</td>
+        <td>{{ info.url_id }}</td>
         <td>{{ info.h1 }}</td>
         <td>{{ info.title }}</td>
         <td>{{ info.description }}</td>

@@ -36,18 +36,18 @@ def post_new():
     if id:
         flash('Страница уже существует', 'primary')
         return redirect(url_for('get_new', id=id))
-    id = req.insert({'name': normalized_url, 'created_at': date})
+    id = req.insert({'name': normalized_url, 'created_at': date}, returning='id')
     flash('Страница успешно добавлена', 'success')
     return redirect(url_for('get_new', id=id))
 
 @app.route('/urls/<id>')
 def get_new(id):
-    req_urls = UrlsTable(conn)
-    req_checks = Table(conn, 'url_checks')
-    url = req_urls.get_row(id)
+    req_urls = Table(conn=conn, table_name='urls')
+    req_checks = Table(conn=conn, table_name='url_checks')
+    url = req_urls.select_row('*', {'id': id})
     infos = req_checks.select_row('*', {'url_id':id})
     messages = get_flashed_messages(with_categories=True)
-    return render_template('url.html', url=url, messages=messages, infos=infos)
+    return render_template('url.html', url=url, messages=messages, infos=infos, id=id)
 
 @app.route('/urls')
 def get_all():
@@ -60,8 +60,8 @@ def post_checks(id):
     req = Table(conn=conn, table_name='url_checks')
     date = str(datetime.date.today())
     values = {'url_id': id, 'created_at': date}
-    id = req.insert(values)
-    return redirect(url_for('get_new', id=id))
+    element = req.insert(values, returning='url_id')
+    return redirect(url_for('get_new', id=element))
 
 
     
