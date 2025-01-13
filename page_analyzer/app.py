@@ -6,8 +6,8 @@ import datetime
 from flask import Flask, render_template, request, flash, redirect, url_for, get_flashed_messages
 from dotenv import load_dotenv
 from urllib.parse import urlparse
-from .db import UrlsTable
-from .db_branch import Table
+from .db import Table
+
 
 
 load_dotenv()
@@ -44,15 +44,15 @@ def post_new():
 def get_new(id):
     req_urls = Table(conn=conn, table_name='urls')
     req_checks = Table(conn=conn, table_name='url_checks')
-    url = req_urls.select_row('*', {'id': id})
+    url = req_urls.select_row('*', {'id': id})[0]
     infos = req_checks.select_row('*', {'url_id':id})
     messages = get_flashed_messages(with_categories=True)
     return render_template('url.html', url=url, messages=messages, infos=infos, id=id)
 
 @app.route('/urls')
 def get_all():
-    req = UrlsTable(conn)
-    urls = req.get_all()
+    req = Table(conn=conn, table_name='urls')
+    urls = req.select_all()
     return render_template('urls.html', urls=urls)
 
 @app.post('/urls/<id>/checks')
