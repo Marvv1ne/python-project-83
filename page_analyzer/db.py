@@ -1,4 +1,4 @@
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import RealDictCursor, NamedTupleCursor
 
 class Table:
     def __init__(self, conn, table_name):
@@ -26,9 +26,10 @@ class Table:
         sql = f'SELECT {element} FROM {self.table_name} WHERE {column_name} = %s;'        
         with self.conn.cursor() as curs:
             curs.execute(sql, (value, ))
-            if curs.fetchone():
-                return curs.fetchone()[0]
-        return None
+            element = curs.fetchone()
+            if not element:
+                return None
+            return element[0]
     
     def insert(self, row, returning):
         columns_names = ', '.join(list(row.keys()))
