@@ -24,12 +24,12 @@ class Table:
     def select_element(self, element, search):
         column_name, value = list(search.items())[0]        
         sql = f'SELECT {element} FROM {self.table_name} WHERE {column_name} = %s;'        
-        with self.conn.cursor() as curs:
+        with self.conn.cursor(cursor_factory=RealDictCursor) as curs:
             curs.execute(sql, (value, ))
-            element = curs.fetchone()
-            if not element:
+            result = curs.fetchone()
+            if not result:
                 return None
-            return element[0]
+            return result[element]
     
     def insert(self, row, returning):
         columns_names = ', '.join(list(row.keys()))
@@ -37,8 +37,8 @@ class Table:
         number_of_columns = ', '.join(['%s' for _ in range(len(values))])
         sql = f'''INSERT INTO {self.table_name} ({columns_names}) VALUES 
                  ({number_of_columns}) RETURNING {returning};'''
-        with self.conn.cursor() as curs:
+        with self.conn.cursor(cursor_factory=RealDictCursor) as curs:
             curs.execute(sql, values)
-            element = curs.fetchone()[0]
+            element = curs.fetchone()[returning]
             self.conn.commit()
         return element
