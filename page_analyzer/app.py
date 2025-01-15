@@ -6,7 +6,8 @@ import datetime
 from flask import Flask, render_template, request, flash, redirect, url_for, get_flashed_messages
 from dotenv import load_dotenv
 from urllib.parse import urlparse
-from .db import Table
+from .db import DataBase
+from .url_parser import get_info
 
 
 
@@ -31,37 +32,41 @@ def post_new():
         return render_template('index.html', messages)
     normalized_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}'
     date = datetime.date.today()
-    req = Table(conn=conn, table_name='urls')
-    id = req.select_element('id', {'name': normalized_url})
+    req = DataBase(conn=conn)
+    id = req.select_id_from_urls(normalized_url)
     if id:
         flash('Страница уже существует', 'primary')
         return redirect(url_for('get_new', id=id))
-    id = req.insert({'name': normalized_url, 'created_at': date}, returning='id')
+    id = req.insert_in_urls(normalized_url, date)
     flash('Страница успешно добавлена', 'success')
     return redirect(url_for('get_new', id=id))
 
 @app.route('/urls/<id>')
 def get_new(id):
-    req_urls = Table(conn=conn, table_name='urls')
-    req_checks = Table(conn=conn, table_name='url_checks')
-    url = req_urls.select_row('*', {'id': id})[0]
-    infos = req_checks.select_row('*', {'url_id':id})
+    req = DataBase(conn=conn)
+    url = req.select_row_from_urls(id)
+    infos = req.select_row_from_url_checks(id)
     messages = get_flashed_messages(with_categories=True)
     return render_template('url.html', url=url, messages=messages, infos=infos, id=id)
 
 @app.route('/urls')
 def get_all():
-    req = Table(conn=conn, table_name='urls')
-    urls = req.select_all()
+    req = DataBase(conn=conn)
+    urls = req.select_all_from_urls()
     return render_template('urls.html', urls=urls)
 
 @app.post('/urls/<id>/checks')
 def post_checks(id):
-    req = Table(conn=conn, table_name='url_checks')
+    req = DataBase(conn=conn)
+    url = req.select_row_from_urls(id).name
+    
     date = str(datetime.date.today())
-    values = {'url_id': id, 'created_at': date}
-    element = req.insert(values, returning='url_id')
-    return redirect(url_for('get_new', id=element))
+    url_info = get_info(url)
+    url_info['url_id'] = id
+    url_info['created_at'] = date
+    req.insert_into_url_checks(url_info)
+    
+    return redirect(url_for('get_new', id=id))
 
 
     
