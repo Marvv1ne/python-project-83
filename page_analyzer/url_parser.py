@@ -1,5 +1,19 @@
+import validators
 import requests
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
+
+def validate_url(url):
+    if len(url) > 255:
+        return 'URL превышает 255 символов'
+    elif not validators.url(url):
+        return 'Некорректный URL'
+    elif not url:
+        return 'URL обязателен для заполнения'
+
+def normalize_url(url):
+    parsed_url = urlparse(url)
+    return f'{parsed_url.scheme}://{parsed_url.netloc}'
 
 def get_info(url):
     response = requests.get(url)
