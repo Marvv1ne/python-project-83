@@ -74,7 +74,7 @@ def post_checks(id):
     try:
         response = requests.get(url)
         response.raise_for_status()
-    except requests.RequestException:
+    except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
         conn.close()
         return redirect(url_for('get_new', id=id))
