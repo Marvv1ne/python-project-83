@@ -20,7 +20,7 @@ def index():
     return render_template('index.html')
 
 
-@app.post('/')
+@app.post('/urls')
 def post_new():
     conn = connect_to_db(app)
     url = request.form.get('url')
