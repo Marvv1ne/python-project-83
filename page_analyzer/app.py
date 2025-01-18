@@ -8,7 +8,6 @@ from .db import DataBase, connect_to_db
 from .utils import normalize_url, get_info, validate_url
 
 
-
 app = Flask(__name__)
 load_dotenv()
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
