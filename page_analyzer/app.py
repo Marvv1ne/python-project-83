@@ -78,14 +78,6 @@ def post_checks(id):
         flash('Произошла ошибка при проверке', 'danger')
         conn.close()
         return redirect(url_for('get_new', id=id))
-    except requests.exceptions.Timeout:
-        flash('Произошла ошибка при проверке', 'danger')
-        conn.close()
-        return redirect(url_for('get_new', id=id))
-    if response.status_code != 200:
-        flash('Произошла ошибка при проверке', 'danger')
-        conn.close()
-        return redirect(url_for('get_new', id=id))
     date = str(datetime.date.today())
     url_info = get_info(response)
     url_info['url_id'] = id
