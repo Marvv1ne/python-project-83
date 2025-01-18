@@ -5,7 +5,7 @@ from flask import (Flask, render_template, request, flash,
                    redirect, url_for, get_flashed_messages)
 
 from .db import DataBase, connect_to_db
-from .url_parser import normalize_url, get_info, validate_url
+from .utils import normalize_url, get_info, validate_url
 
 try:
     from dotenv import load_dotenv
