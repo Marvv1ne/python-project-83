@@ -61,21 +61,16 @@
       </tr>
     </thead>
       <tbody>
-    
-    
-      {% for info in infos %}
+      {% for check in checks %}
       <tr>
-        <td>{{ info.id }}</td>
-        <td>{{ info.status_code }}</td>
-        <td>{{ info.url_id }}</td>
-        <td>{{ info.h1 }}</td>
-        <td>{{ info.title }}</td>
-        <td>{{ info.description }}</td>
-        <td>{{ info.created_at }}</td>
+        <td>{{ check.id }}</td>
+        <td>{{ check.status_code }}</td>
+        <td>{{ check.h1 }}</td>
+        <td>{{ check.title }}</td>
+        <td>{{ check.description }}</td>
+        <td>{{ check.created_at }}</td>
       </tr>
       {% endfor %}
-    
-    
     </tbody>
     </table>
   </div>
