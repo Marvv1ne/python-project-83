@@ -82,6 +82,7 @@ def post_checks(id):
     url_info = get_info(url)
     url_info['url_id'] = id
     url_info['created_at'] = date
+    flash('Страница успешно проверена', 'success')
     req.insert_into_url_checks(url_info)
     conn.close()
     return redirect(url_for('get_new', id=id))
