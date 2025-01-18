@@ -63,3 +63,16 @@ class DataBase:
         with self.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(sql, (url_id,))
             return curs.fetchall()
+    
+    def select_urls_with_last_check(self):
+        sql = '''SELECT urls.id as id,
+                        urls.name as name,
+                        url_checks.created_at as last_check,
+                        url_checks.status_code as response_code
+                FROM urls
+                LEFT JOIN url_checks ON urls.id = url_checks.url_id
+                ORDER BY urls.id DESC;
+            '''
+        with self.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
+            curs.execute(sql)
+            return curs.fetchall()

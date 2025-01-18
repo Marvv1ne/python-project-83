@@ -61,7 +61,7 @@ def get_new(id):
 def get_all():
     conn = connect_to_db(app)
     req = DataBase(conn=conn)
-    urls = req.select_all_from_urls()
+    urls = req.select_urls_with_last_check()
     conn.close()
     return render_template('urls.html', urls=urls)
 
