@@ -28,7 +28,7 @@ def post_new():
     if error:
         flash(error, 'danger')
         messages = get_flashed_messages(with_categories=True)
-        return render_template('index.html', messages=messages)
+        return render_template('index.html', messages=messages), 422
     normalized_url = normalize_url(url)
     date = datetime.date.today()
     req = DataBase(conn=conn)
