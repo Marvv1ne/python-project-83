@@ -47,13 +47,13 @@ def get_new(id):
     conn = connect_to_db(app)
     req = DataBase(conn=conn)
     url = req.select_row_from_urls(id)
-    infos = req.select_row_from_url_checks(id)
+    checks = req.select_row_from_url_checks(id)
     messages = get_flashed_messages(with_categories=True)
     conn.close()
     return render_template('url.html',
                            url=url,
                            messages=messages,
-                           infos=infos,
+                           checks=checks,
                            id=id)
 
 
