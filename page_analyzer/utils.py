@@ -18,8 +18,7 @@ def normalize_url(url):
     return f'{parsed_url.scheme}://{parsed_url.netloc}'
 
 
-def get_info(url):
-    response = requests.get(url)
+def get_info(response):
     soup = BeautifulSoup(response.text, 'html.parser')
     h1 = soup.find('h1').text[:255] if soup.find('h1') else ''
     title = soup.find('title').text[:255] if soup.find('title') else ''

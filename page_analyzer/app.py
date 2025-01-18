@@ -79,7 +79,7 @@ def post_checks(id):
         conn.close()
         return redirect(url_for('get_new', id=id))
     date = str(datetime.date.today())
-    url_info = get_info(url)
+    url_info = get_info(response)
     url_info['url_id'] = id
     url_info['created_at'] = date
     flash('Страница успешно проверена', 'success')
