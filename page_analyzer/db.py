@@ -36,7 +36,7 @@ class DataBase:
                 raise e
 
     def select_all_from_urls(self):
-        sql = 'SELECT * FROM urls'
+        sql = 'SELECT * FROM urls ORDER BY id DESC'
         with self.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(sql)
             table = curs.fetchall()
@@ -59,7 +59,7 @@ class DataBase:
             return result.id
 
     def select_row_from_url_checks(self, url_id):
-        sql = 'SELECT * FROM url_checks WHERE url_id=%s;'
+        sql = 'SELECT * FROM url_checks WHERE url_id=%s ORDER BY id DESC;'
         with self.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(sql, (url_id,))
             return curs.fetchall()
