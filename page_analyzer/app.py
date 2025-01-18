@@ -1,7 +1,8 @@
 import os
 import datetime
 import requests
-from flask import Flask, render_template, request, flash, redirect, url_for, get_flashed_messages
+from flask import (Flask, render_template, request, flash,
+                   redirect, url_for, get_flashed_messages)
 
 from .db import DataBase, connect_to_db
 from .url_parser import normalize_url, get_info, validate_url
@@ -16,12 +17,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['DATABASE_URL'] = os.getenv('DATABASE_URL')
 
-#conn = psycopg2.connect(DATABASE_URL)
-
 
 @app.get('/')
 def index():
     return render_template('index.html')
+
 
 @app.post('/')
 def post_new():
@@ -44,6 +44,7 @@ def post_new():
     conn.close()
     return redirect(url_for('get_new', id=id))
 
+
 @app.route('/urls/<id>')
 def get_new(id):
     conn = connect_to_db(app)
@@ -52,7 +53,12 @@ def get_new(id):
     infos = req.select_row_from_url_checks(id)
     messages = get_flashed_messages(with_categories=True)
     conn.close()
-    return render_template('url.html', url=url, messages=messages, infos=infos, id=id)
+    return render_template('url.html',
+                           url=url,
+                           messages=messages,
+                           infos=infos,
+                           id=id)
+
 
 @app.route('/urls')
 def get_all():
@@ -61,6 +67,7 @@ def get_all():
     urls = req.select_all_from_urls()
     conn.close()
     return render_template('urls.html', urls=urls)
+
 
 @app.post('/urls/<id>/checks')
 def post_checks(id):
