@@ -57,7 +57,7 @@ def get_url_info(id):
 
 
 @app.route('/urls')
-def get_all():
+def get_all_urls():
     conn = connect_to_db(app)
     req = DataBase(conn=conn)
     urls = req.select_urls_with_last_check()
