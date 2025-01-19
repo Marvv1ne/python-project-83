@@ -20,7 +20,7 @@ def index():
 
 
 @app.post('/urls')
-def post_new():
+def post_new_url():
     conn = connect_to_db(app)
     url = request.form.get('url')
     error = validate_url(url)
@@ -34,15 +34,15 @@ def post_new():
     id = req.select_id_from_urls(normalized_url)
     if id:
         flash('Страница уже существует', 'primary')
-        return redirect(url_for('get_new', id=id))
+        return redirect(url_for('get_url_info', id=id))
     id = req.insert_in_urls(normalized_url, date)
     flash('Страница успешно добавлена', 'success')
     conn.close()
-    return redirect(url_for('get_new', id=id))
+    return redirect(url_for('get_url_info', id=id))
 
 
 @app.route('/urls/<id>')
-def get_new(id):
+def get_url_info(id):
     conn = connect_to_db(app)
     req = DataBase(conn=conn)
     url = req.select_row_from_urls(id)
@@ -76,7 +76,7 @@ def post_checks(id):
     except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
         conn.close()
-        return redirect(url_for('get_new', id=id))
+        return redirect(url_for('get_url_info', id=id))
     date = str(datetime.date.today())
     url_info = get_info(response)
     url_info['url_id'] = id
@@ -84,4 +84,4 @@ def post_checks(id):
     flash('Страница успешно проверена', 'success')
     req.insert_into_url_checks(url_info)
     conn.close()
-    return redirect(url_for('get_new', id=id))
+    return redirect(url_for('get_url_info', id=id))
