@@ -7,8 +7,8 @@ def connect_to_db(app):
 
 
 class DataBase:
-    def __init__(self, conn):
-        self.conn = conn
+    def __init__(self, app):
+        self.conn = psycopg2.connect(app.config['DATABASE_URL'])
 
     def insert_in_urls(self, name, created_at):
         sql = '''INSERT INTO urls (name, created_at)
@@ -76,3 +76,6 @@ class DataBase:
         with self.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(sql)
             return curs.fetchall()
+    
+    def close_connection(self):
+        return self.conn.close()
