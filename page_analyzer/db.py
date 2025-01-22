@@ -76,6 +76,6 @@ class DataBase:
         with self.conn.cursor(cursor_factory=NamedTupleCursor) as curs:
             curs.execute(sql)
             return curs.fetchall()
-    
+
     def close_connection(self):
         return self.conn.close()
