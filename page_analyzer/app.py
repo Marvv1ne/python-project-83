@@ -4,7 +4,7 @@ import requests
 from flask import (Flask, render_template, request, flash,
                    redirect, url_for, get_flashed_messages)
 from dotenv import load_dotenv
-from .db import DataBase, connect_to_db
+from .db import DataBase
 from .utils import normalize_url, get_info, validate_url
 
 
@@ -21,7 +21,6 @@ def index():
 
 @app.post('/urls')
 def post_new_url():
-    conn = connect_to_db(app)
     url = request.form.get('url')
     error = validate_url(url)
     if error:
@@ -30,25 +29,24 @@ def post_new_url():
         return render_template('index.html', messages=messages), 422
     normalized_url = normalize_url(url)
     date = datetime.date.today()
-    req = DataBase(conn=conn)
-    id = req.select_id_from_urls(normalized_url)
+    connection = DataBase(app)
+    id = connection.select_id_from_urls(normalized_url)
     if id:
         flash('Страница уже существует', 'primary')
         return redirect(url_for('get_url_info', id=id))
-    id = req.insert_in_urls(normalized_url, date)
+    id = connection.insert_in_urls(normalized_url, date)
     flash('Страница успешно добавлена', 'success')
-    conn.close()
+    connection.close_connection()
     return redirect(url_for('get_url_info', id=id))
 
 
 @app.route('/urls/<id>')
 def get_url_info(id):
-    conn = connect_to_db(app)
-    req = DataBase(conn=conn)
-    url = req.select_row_from_urls(id)
-    checks = req.select_row_from_url_checks(id)
+    connection = DataBase(app)
+    url = connection.select_row_from_urls(id)
+    checks = connection.select_row_from_url_checks(id)
     messages = get_flashed_messages(with_categories=True)
-    conn.close()
+    connection.close_connection()
     return render_template('url.html',
                            url=url,
                            messages=messages,
@@ -58,30 +56,28 @@ def get_url_info(id):
 
 @app.route('/urls')
 def get_all_urls():
-    conn = connect_to_db(app)
-    req = DataBase(conn=conn)
-    urls = req.select_urls_with_last_check()
-    conn.close()
+    connection = DataBase(app)
+    urls = connection.select_urls_with_last_check()
+    connection.close_connection()
     return render_template('urls.html', urls=urls)
 
 
 @app.post('/urls/<id>/checks')
 def post_checks(id):
-    conn = connect_to_db(app)
-    req = DataBase(conn=conn)
-    url = req.select_row_from_urls(id).name
+    connection = DataBase(app)
+    url = connection.select_row_from_urls(id).name
     try:
         response = requests.get(url)
         response.raise_for_status()
     except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'danger')
-        conn.close()
+        connection.close_connection()
         return redirect(url_for('get_url_info', id=id))
     date = str(datetime.date.today())
     url_info = get_info(response)
     url_info['url_id'] = id
     url_info['created_at'] = date
     flash('Страница успешно проверена', 'success')
-    req.insert_into_url_checks(url_info)
-    conn.close()
+    connection.insert_into_url_checks(url_info)
+    connection.close_connection()
     return redirect(url_for('get_url_info', id=id))
