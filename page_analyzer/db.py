@@ -2,10 +2,6 @@ import psycopg2
 from psycopg2.extras import NamedTupleCursor
 
 
-def connect_to_db(app):
-    return psycopg2.connect(app.config['DATABASE_URL'])
-
-
 class DataBase:
     def __init__(self, app):
         self.conn = psycopg2.connect(app.config['DATABASE_URL'])
